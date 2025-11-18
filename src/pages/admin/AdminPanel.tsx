@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   adminMetrics,
   adminMockBroadcasts,
@@ -81,6 +82,7 @@ const filterUsers = (users: AdminUser[], filters: AdminFilters) =>
   });
 
 const AdminPanel = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<(typeof navItems)[number]["id"]>("dashboard");
   const [metric, setMetric] = useState<AdminMetric>(adminMetrics[0]);
   const [users, setUsers] = useState(adminMockUsers);
@@ -98,6 +100,13 @@ const AdminPanel = () => {
   });
 
   const filteredUsers = useMemo(() => filterUsers(users, filters), [filters, users]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("glowmax_admin_token");
+    if (!token) {
+      navigate("/admin");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     if (selectedUserId && !filteredUsers.some((user) => user.id === selectedUserId)) {

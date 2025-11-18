@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 import AdminPanel from "./pages/admin/AdminPanel";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/download" element={<Download />} />
-          <Route path="/admin/*" element={<AdminPanel />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard/*" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
