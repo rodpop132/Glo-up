@@ -54,8 +54,14 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border/50 pt-8 text-center text-muted-foreground">
+        <div className="border-t border-border/50 pt-8 text-center text-muted-foreground flex flex-col items-center gap-2">
           <p>&copy; 2024 Glowmax. Todos os direitos reservados.</p>
+          <a
+            href="/admin"
+            className="text-xs uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors"
+          >
+            admin
+          </a>
         </div>
       </div>
     </footer>
