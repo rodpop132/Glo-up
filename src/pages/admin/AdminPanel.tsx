@@ -303,7 +303,7 @@ const AdminPanel = () => {
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="font-mono text-xs">
-              GET /users/me -> is_admin
+              GET /users/me - is_admin
             </Badge>
             <Button size="sm" variant="secondary">
               <ShieldCheck className="mr-2 h-4 w-4" />
