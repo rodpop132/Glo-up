@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,33 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<"idle" | "checking" | "ok" | "error">("idle");
+  const [apiStatusMessage, setApiStatusMessage] = useState("");
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      setApiStatus("checking");
+      setApiStatusMessage("");
+      try {
+        const res = await fetch(buildUrl("/health"));
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const payload = await res.json();
+        setApiStatus("ok");
+        setApiStatusMessage(`API online (timestamp ${payload?.timestamp ?? "desconhecido"})`);
+      } catch (err) {
+        setApiStatus("error");
+        setApiStatusMessage(
+          `Healthcheck falhou em ${buildUrl("/health")}: ${
+            err instanceof Error ? err.message : "erro desconhecido"
+          }`,
+        );
+      }
+    };
+
+    checkHealth();
+  }, []);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -85,7 +112,8 @@ const AdminLogin = () => {
       toast({ title: "Bem-vindo", description: "Sessao admin iniciada com sucesso." });
       navigate("/admin/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro inesperado no login.");
+      const detail = err instanceof Error ? err.message : "Erro inesperado no login.";
+      setError(`${detail} (endpoint: ${buildUrl("/auth/login")}, origem configurada: ${API_NOTE})`);
     } finally {
       setLoading(false);
     }
@@ -132,6 +160,24 @@ const AdminLogin = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "A validar..." : "Entrar"}
             </Button>
+            <div className="text-xs text-muted-foreground text-center space-y-1">
+              <p>
+                Health:{" "}
+                <span
+                  className={
+                    apiStatus === "ok"
+                      ? "text-green-400"
+                      : apiStatus === "error"
+                        ? "text-destructive"
+                        : "text-muted-foreground"
+                  }
+                >
+                  {apiStatus === "checking"
+                    ? "a verificar..."
+                    : apiStatusMessage || "sem dados"}
+                </span>
+              </p>
+            </div>
             <div className="text-xs text-muted-foreground text-center space-y-1">
               <p>
                 A API usada e {API_NOTE}. {API_BASE === "/api" ? "Requests passam pelo proxy /api para evitar mixed content." : null}
