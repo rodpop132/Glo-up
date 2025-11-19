@@ -1,4 +1,5 @@
 import { Instagram, Twitter, Linkedin } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
@@ -56,12 +57,12 @@ const Footer = () => {
 
         <div className="border-t border-border/50 pt-8 text-center text-muted-foreground flex flex-col items-center gap-2">
           <p>&copy; 2024 Glowmax. Todos os direitos reservados.</p>
-          <a
-            href="/admin"
-            className="text-xs uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors"
+          <Link
+            to="/admin"
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-foreground hover:border-primary hover:text-primary transition-colors"
           >
-            admin
-          </a>
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
