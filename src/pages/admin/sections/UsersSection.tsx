@@ -107,11 +107,11 @@ export const UsersSection = ({
           <SelectTrigger>
             <SelectValue placeholder="Atividade" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Qualquer atividade</SelectItem>
-            <SelectItem value="online">Online (<=5 min)</SelectItem>
-            <SelectItem value="offline">Offline</SelectItem>
-          </SelectContent>
+            <SelectContent>
+              <SelectItem value="all">Qualquer atividade</SelectItem>
+              <SelectItem value="online">Online (&lt;=5 min)</SelectItem>
+              <SelectItem value="offline">Offline</SelectItem>
+            </SelectContent>
         </Select>
       </CardContent>
     </Card>
