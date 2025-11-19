@@ -7,13 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/components/ui/use-toast";
 
-const API_BASE = (() => {
+const resolveApiBase = () => {
   const envBase = import.meta.env.VITE_API_URL?.trim();
+  const hasWindow = typeof window !== "undefined";
+  const fallback = "/api";
+
   if (!envBase) {
-    return "/api";
+    return { base: fallback, note: fallback };
   }
-  return envBase.endsWith("/") ? envBase.slice(0, -1) : envBase;
-})();
+
+  const sanitized = envBase.endsWith("/") ? envBase.slice(0, -1) : envBase;
+  const usesHttp = sanitized.startsWith("http://");
+
+  if (hasWindow && window.location.protocol === "https:" && usesHttp) {
+    console.warn(
+      `[AdminLogin] VITE_API_URL (${sanitized}) usa HTTP numa pagina HTTPS. A request sera feita via proxy ${fallback}.`,
+    );
+    return { base: fallback, note: sanitized };
+  }
+
+  return { base: sanitized, note: sanitized };
+};
+
+const { base: API_BASE, note: API_NOTE } = resolveApiBase();
 const buildUrl = (path: string) => `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 const TOKEN_KEY = "glowmax_admin_token";
 const PROFILE_KEY = "glowmax_admin_profile";
@@ -116,9 +132,12 @@ const AdminLogin = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "A validar..." : "Entrar"}
             </Button>
-            <p className="text-xs text-muted-foreground text-center">
-              A API usada e {API_BASE}. Atualiza a variavel VITE_API_URL para apontar para producao ou usa o proxy /api.
-            </p>
+            <div className="text-xs text-muted-foreground text-center space-y-1">
+              <p>
+                A API usada e {API_NOTE}. {API_BASE === "/api" ? "Requests passam pelo proxy /api para evitar mixed content." : null}
+              </p>
+              <p>Atualiza VITE_API_URL para um endpoint HTTPS ou mantem vazio para usar o proxy.</p>
+            </div>
           </form>
         </CardContent>
       </Card>
