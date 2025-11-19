@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/components/ui/use-toast";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = (() => {
+  const envBase = import.meta.env.VITE_API_URL?.trim();
+  if (!envBase) {
+    return "/api";
+  }
+  return envBase.endsWith("/") ? envBase.slice(0, -1) : envBase;
+})();
+const buildUrl = (path: string) => `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 const TOKEN_KEY = "glowmax_admin_token";
 const PROFILE_KEY = "glowmax_admin_profile";
 
@@ -28,7 +35,7 @@ const AdminLogin = () => {
       loginBody.append("username", email);
       loginBody.append("password", password);
 
-      const loginResponse = await fetch(`${API_BASE}/auth/login`, {
+      const loginResponse = await fetch(buildUrl("/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: loginBody,
@@ -44,7 +51,7 @@ const AdminLogin = () => {
       }
 
       const token = loginData.access_token as string;
-      const meResponse = await fetch(`${API_BASE}/users/me`, {
+      const meResponse = await fetch(buildUrl("/users/me"), {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -110,8 +117,7 @@ const AdminLogin = () => {
               {loading ? "A validar..." : "Entrar"}
             </Button>
             <p className="text-xs text-muted-foreground text-center">
-              A API usada e {API_BASE || "a mesma origem do site"}. Atualiza a variavel VITE_API_URL para apontar para
-              producao.
+              A API usada e {API_BASE}. Atualiza a variavel VITE_API_URL para apontar para producao ou usa o proxy /api.
             </p>
           </form>
         </CardContent>
