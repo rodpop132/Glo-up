@@ -36,7 +36,7 @@ const PROFILE_KEY = "glowmax_admin_profile";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@teuapp.com");
+  const [email, setEmail] = useState("admin@glomax.app");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
